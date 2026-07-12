@@ -5,9 +5,9 @@
     "@laurentlemercier"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/laurentlemercier/remora_ng",
+  "documentation": "https://github.com/laurentlemercier/remora-ng",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/laurentlemercier/remora_ng/issues",
+  "issue_tracker": "https://github.com/laurentlemercier/remora-ng/issues",
   "version": "0.1.0"
 }
