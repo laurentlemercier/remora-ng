@@ -1,6 +1,6 @@
 # GitHub Codespaces Development Guide
 
-Integration blueprint is fully compatible with GitHub Codespaces for cloud-based development.
+Remora custom component for Home Assistant is fully compatible with GitHub Codespaces for cloud-based development.
 
 ## Quick Start
 

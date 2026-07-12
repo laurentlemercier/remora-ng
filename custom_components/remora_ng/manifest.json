@@ -1,0 +1,13 @@
+{
+  "domain": "remora_ng",
+  "name": "Remora custom component for Home Assistant",
+  "codeowners": [
+    "@laurentlemercier"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/laurentlemercier/remora_ng",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/laurentlemercier/remora_ng/issues",
+  "version": "0.1.0"
+}
