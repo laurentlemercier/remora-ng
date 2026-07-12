@@ -1,16 +1,22 @@
-"""Constants for remora_ng."""
+"""Constants for the Remora integration."""
 
+from datetime import timedelta
 from logging import Logger, getLogger
+
+from homeassistant.const import Platform
+
+DOMAIN = "remora"
 
 LOGGER: Logger = getLogger(__package__)
 
-# Integration metadata
-DOMAIN = "remora_ng"
-ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
+PLATFORMS: list[Platform] = [
+    Platform.SENSOR,
+]
 
-# Platform parallel updates - applied to all platforms
-PARALLEL_UPDATES = 1
+DEFAULT_SCAN_INTERVAL = timedelta(seconds=30)
 
-# Default configuration values
-DEFAULT_UPDATE_INTERVAL_HOURS = 1
-DEFAULT_ENABLE_DEBUGGING = False
+MANUFACTURER = "Remora"
+
+CONF_DEBUG = "debug"
+
+DEFAULT_DEBUG = False
