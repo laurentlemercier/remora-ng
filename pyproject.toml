@@ -6,15 +6,15 @@
 # - [tool.pylint.*] - Optional additional linting (Ruff is sufficient)
 
 [project]
-name = "remora_ng"
+name = "remora"
 version = "0.0.0"              # Version is managed in manifest.json only
 requires-python = ">=3.14"
 
 [tool.setuptools]
-packages = ["custom_components.remora_ng"]
+packages = ["custom_components.remora"]
 
 [tool.pyright]
-include = ["custom_components/remora_ng"]
+include = ["custom_components/remora"]
 exclude = [
     "**/.*",
     "**/__pycache__",
@@ -54,7 +54,7 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["custom_components/remora_ng"]
+source = ["custom_components/remora"]
 omit = ["tests/*"]
 
 [tool.coverage.report]

@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer Remora",
+        "description": "Renseigne l'adresse IP (ou nom d'hôte) de la centrale Remora et l'intervalle de rafraîchissement souhaité.",
+        "data": {
+          "host": "Hôte / Adresse IP",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter à la centrale Remora. Vérifie l'adresse.",
+      "unknown": "Erreur inattendue."
+    },
+    "abort": {
+      "already_configured": "Cette centrale Remora est déjà configurée."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Modifier l'intervalle de rafraîchissement",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    }
+  }
+}

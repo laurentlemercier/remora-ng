@@ -54,7 +54,7 @@ automation:
         weekday:
           - mon
     action:
-      - action: remora_ng.example_service
+      - action: remora.example_service
         target:
           entity_id: button.device_name_reset_filter
 ```
@@ -74,7 +74,7 @@ blueprint:
       selector:
         entity:
           domain: sensor
-          integration: remora_ng
+          integration: remora
     threshold:
       name: Threshold value
       selector:
@@ -160,4 +160,4 @@ hours_to_show: 24
 
 - [Configuration Reference](./CONFIGURATION.md) - All configuration options
 - [Getting Started](./GETTING_STARTED.md) - Installation and initial setup
-- [GitHub Issues](https://github.com/laurentlemercier/remora_ng/issues) - Report problems
+- [GitHub Issues](https://github.com/laurentlemercier/remora/issues) - Report problems

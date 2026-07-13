@@ -1,5 +1,5 @@
 ---
-# yamllint configuration for remora_ng
+# yamllint configuration for remora
 # Documentation: https://yamllint.readthedocs.io/en/stable/rules.html
 
 extends: default

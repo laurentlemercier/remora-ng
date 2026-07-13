@@ -9,7 +9,7 @@
       "extra-files": [
         {
           "type": "json",
-          "path": "custom_components/remora_ng/manifest.json",
+          "path": "custom_components/remora/manifest.json",
           "jsonpath": "$.version"
         }
       ],

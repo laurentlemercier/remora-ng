@@ -6,10 +6,10 @@
 
 ## Project Identity
 
-- **Domain:** `remora_ng`
+- **Domain:** `remora`
 - **Title:** Remora custom component for Home Assistant
 - **Class prefix:** `Remora`
-- **Main code:** `custom_components/remora_ng/`
+- **Main code:** `custom_components/remora/`
 - **Validate:** `script/check` (type-check + lint-check + spell-check)
 - **Start HA:** `./script/develop` (kills existing, starts on port 8123)
 - **Force restart:** `pkill -f "hass --config" || true && pkill -f "debugpy.*5678" || true && ./script/develop`
@@ -140,7 +140,7 @@ script/type-check   # Pyright — no auto-fix ever
 
 - Live: terminal where `./script/develop` runs
 - File: `config/home-assistant.log` (most recent), `config/home-assistant.log.1` (previous)
-- Debug level: `custom_components.remora_ng: debug` in `config/configuration.yaml`
+- Debug level: `custom_components.remora: debug` in `config/configuration.yaml`
 
 ## Working With the Developer
 

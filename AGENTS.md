@@ -8,13 +8,13 @@ This is a Home Assistant custom integration that was generated from a blueprint 
 
 **Integration details:**
 
-- **Domain:** `remora_ng`
+- **Domain:** `remora`
 - **Title:** Remora custom component for Home Assistant
-- **Repository:** laurentlemercier/remora_ng
+- **Repository:** laurentlemercier/remora
 
 **Key directories:**
 
-- `custom_components/remora_ng/` - Main integration code
+- `custom_components/remora/` - Main integration code
 - `config/` - Home Assistant configuration for local testing
 - `tests/` - Unit and integration tests
 - `script/` - Development and validation scripts
@@ -51,7 +51,7 @@ pkill -f "hass --config" || true && pkill -f "debugpy.*5678" || true && ./script
 
 **Adjusting log levels:**
 
-- Integration logs: `custom_components.remora_ng: debug` in `config/configuration.yaml`
+- Integration logs: `custom_components.remora: debug` in `config/configuration.yaml`
 - You can modify log levels when debugging - just restart HA after changes
 
 **Context-specific instructions:**
@@ -187,13 +187,13 @@ As an AI agent, **aim for Silver or Gold Quality Scale** when generating code:
 
 This integration uses the following identifiers consistently:
 
-- **Domain:** `remora_ng`
+- **Domain:** `remora`
 - **Title:** Remora custom component for Home Assistant
 - **Class prefix:** `Remora`
 
 **When creating new files:**
 
-- Use the domain `remora_ng` for all DOMAIN references
+- Use the domain `remora` for all DOMAIN references
 - Prefix all integration-specific classes with `Remora`
 - Use "Remora custom component for Home Assistant" as the display title
 - Never hardcode different values
@@ -524,7 +524,7 @@ After auto-fixes are applied, only manually edit files for errors that **remain 
 
 **Test structure:**
 
-- `tests/` mirrors `custom_components/remora_ng/` structure
+- `tests/` mirrors `custom_components/remora/` structure
 - Use fixtures for common setup (Home Assistant mock, coordinator, etc.)
 - Mock external API calls
 

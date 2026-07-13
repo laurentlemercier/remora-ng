@@ -16,7 +16,7 @@ Uncomment and customize these badges if you want to use them:
 
 **✨ Develop in the cloud:** Want to contribute or customize this integration? Open it directly in GitHub Codespaces - no local setup required!
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/laurentlemercier/remora_ng?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/laurentlemercier/remora?quickstart=1)
 
 ## ✨ Features
 
@@ -55,7 +55,7 @@ Uncomment and customize these badges if you want to use them:
 
 Click the button below to open the integration directly in HACS:
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jpawlowski&repository=remora_ng&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jpawlowski&repository=remora&category=integration)
 
 Then:
 
@@ -70,7 +70,7 @@ Then:
 
 If you prefer not to use HACS:
 
-1. Download the `custom_components/remora_ng/` folder from this repository
+1. Download the `custom_components/remora/` folder from this repository
 2. Copy it to your Home Assistant's `custom_components/` directory
 3. Restart Home Assistant
 
@@ -84,7 +84,7 @@ If you prefer not to use HACS:
 
 Click the button below to open the configuration dialog:
 
-[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=remora_ng)
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=remora)
 
 Follow the setup wizard:
 
@@ -185,26 +185,26 @@ Find all entities in **Settings** → **Devices & Services** → **Remora custom
 
 The integration provides services for advanced automation:
 
-### `remora_ng.example_action`
+### `remora.example_action`
 
 Perform a custom action (customize this for your needs).
 
 **Example:**
 
 ```yaml
-service: remora_ng.example_action
+service: remora.example_action
 data:
   # Add your parameters here
 ```
 
-### `remora_ng.reload_data`
+### `remora.reload_data`
 
 Manually refresh data from the API without waiting for the update interval.
 
 **Example:**
 
 ```yaml
-service: remora_ng.reload_data
+service: remora.reload_data
 ```
 
 Use these services in automations or scripts for more control.
@@ -271,7 +271,7 @@ To enable debug logging for this integration, add the following to your `configu
 logger:
   default: info
   logs:
-    custom_components.remora_ng: debug
+    custom_components.remora: debug
 ```
 
 ### Common Issues
@@ -399,14 +399,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/laurentlemercier/remora_ng.svg?style=for-the-badge
-[commits]: https://github.com/laurentlemercier/remora_ng/commits/main
+[commits-shield]: https://img.shields.io/github/commit-activity/y/laurentlemercier/remora.svg?style=for-the-badge
+[commits]: https://github.com/laurentlemercier/remora/commits/main
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
-[license-shield]: https://img.shields.io/github/license/laurentlemercier/remora_ng.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/laurentlemercier/remora.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-%40laurentlemercier-blue.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/laurentlemercier/remora_ng.svg?style=for-the-badge
-[releases]: https://github.com/laurentlemercier/remora_ng/releases
+[releases-shield]: https://img.shields.io/github/release/laurentlemercier/remora.svg?style=for-the-badge
+[releases]: https://github.com/laurentlemercier/remora/releases
 [user_profile]: https://github.com/jpawlowski
 
 <!-- Optional badge definitions - uncomment if needed:

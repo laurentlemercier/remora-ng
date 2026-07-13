@@ -16,7 +16,7 @@ This guide will help you install and set up the Remora custom component for Home
 2. Go to "Integrations"
 3. Click the three dots in the top right corner
 4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/laurentlemercier/remora_ng`
+5. Add this repository URL: `https://github.com/laurentlemercier/remora`
 6. Set category to "Integration"
 7. Click "Add"
 8. Find "Remora custom component for Home Assistant" in the integration list
@@ -25,9 +25,9 @@ This guide will help you install and set up the Remora custom component for Home
 
 ### Manual Installation
 
-1. Download the latest release from the [releases page](https://github.com/laurentlemercier/remora_ng/releases)
-2. Extract the `remora_ng` folder from the archive
-3. Copy it to `custom_components/remora_ng/` in your Home Assistant configuration directory
+1. Download the latest release from the [releases page](https://github.com/laurentlemercier/remora/releases)
+2. Extract the `remora` folder from the archive
+3. Copy it to `custom_components/remora/` in your Home Assistant configuration directory
 4. Restart Home Assistant
 
 ## Initial Setup
@@ -172,7 +172,7 @@ Enable debug logging to troubleshoot issues:
 logger:
   default: warning
   logs:
-    custom_components.remora_ng: debug
+    custom_components.remora: debug
 ```
 
 Add this to `configuration.yaml`, restart, and reproduce the issue. Check logs for detailed information.
@@ -181,11 +181,11 @@ Add this to `configuration.yaml`, restart, and reproduce the issue. Check logs f
 
 - See [CONFIGURATION.md](./CONFIGURATION.md) for detailed configuration options
 - See [EXAMPLES.md](./EXAMPLES.md) for more automation examples
-- Report issues at [GitHub Issues](https://github.com/laurentlemercier/remora_ng/issues)
+- Report issues at [GitHub Issues](https://github.com/laurentlemercier/remora/issues)
 
 ## Support
 
 For help and discussion:
 
-- [GitHub Discussions](https://github.com/laurentlemercier/remora_ng/discussions)
+- [GitHub Discussions](https://github.com/laurentlemercier/remora/discussions)
 - [Home Assistant Community Forum](https://community.home-assistant.io/)
