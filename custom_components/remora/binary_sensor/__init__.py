@@ -4,16 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
+from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
 
 from .connectivity import ENTITY_DESCRIPTIONS as CONNECTIVITY_DESCRIPTIONS, RemoraConnectivitySensor
 from .filter import ENTITY_DESCRIPTIONS as FILTER_DESCRIPTIONS, RemoraFilterSensor
 
 if TYPE_CHECKING:
-    from custom_components.remora.data import RemoraConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from .data import RemoraConfigEntry
 
 # Combine all entity descriptions from different modules
 ENTITY_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (

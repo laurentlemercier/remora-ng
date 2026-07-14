@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from custom_components.remora.const import LOGGER
+from .const import LOGGER
 
 
 def should_retry_update(exception: Exception, attempt: int) -> bool:

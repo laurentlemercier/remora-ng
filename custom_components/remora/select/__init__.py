@@ -6,23 +6,21 @@ from dataclasses import dataclass
 import logging
 from typing import TYPE_CHECKING
 
-from custom_components.remora.api import CannotConnect, RemoraCommandError
-from custom_components.remora.api.models import FilPiloteMode
-from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.exceptions import HomeAssistantError
+from remora.api import CannotConnect, RemoraCommandError
+from remora.api.models import FilPiloteMode
+from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
-    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
-    from custom_components.remora.data import RemoraConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+    from .coordinator import RemoraDataUpdateCoordinator
+    from .data import RemoraConfigEntry
+
 _LOGGER = logging.getLogger(__name__)
-
-# Requis en dur (littéral) par hassfest, ne pas remplacer par un import.
-PARALLEL_UPDATES = 1
-
 
 # Modes actually implemented on the integration side. Remora firmware
 # also supports Load Shedding, Eco -1°C, and Eco -2°C, but they are not

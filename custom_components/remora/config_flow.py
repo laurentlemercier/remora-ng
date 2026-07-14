@@ -7,13 +7,13 @@ from typing import Any
 
 import voluptuous as vol
 
-from custom_components.remora.api import CannotConnect, RemoraApi
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .api import CannotConnect, RemoraApi
 from .api.models import RemoraDevice
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 

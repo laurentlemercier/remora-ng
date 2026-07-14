@@ -5,20 +5,19 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.button import ButtonDeviceClass, ButtonEntity, ButtonEntityDescription
 from homeassistant.const import EntityCategory
+from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
-    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
-    from custom_components.remora.data import RemoraConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-_LOGGER = logging.getLogger(__name__)
+    from .coordinator import RemoraDataUpdateCoordinator
+    from .data import RemoraConfigEntry
 
-# Requis en dur (littéral) par hassfest, ne pas remplacer par un import.
-PARALLEL_UPDATES = 1
+_LOGGER = logging.getLogger(__name__)
 
 RESTART_DESCRIPTION = ButtonEntityDescription(
     key="restart",

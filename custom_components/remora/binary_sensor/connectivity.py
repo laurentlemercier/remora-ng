@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -12,8 +11,10 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.const import EntityCategory
 
+from .entity import RemoraEntity
+
 if TYPE_CHECKING:
-    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
+    from .coordinator import RemoraDataUpdateCoordinator
 
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(

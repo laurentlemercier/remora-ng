@@ -8,22 +8,21 @@ from datetime import datetime
 import logging
 from typing import TYPE_CHECKING
 
-from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfElectricPotential, UnitOfInformation
 import homeassistant.util.dt as dt_util
+from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
-    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
-    from custom_components.remora.data import RemoraConfigEntry
-    from custom_components.remora.models import RemoraState
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-_LOGGER = logging.getLogger(__name__)
+    from .coordinator import RemoraDataUpdateCoordinator
+    from .data import RemoraConfigEntry
+    from .models import RemoraState
 
-# Requis en dur (littéral) par hassfest, ne pas remplacer par un import.
-PARALLEL_UPDATES = 0
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True, kw_only=True)

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from custom_components.remora.const import LOGGER
+from .const import LOGGER
 
 
 def validate_api_response(data: Any) -> bool:

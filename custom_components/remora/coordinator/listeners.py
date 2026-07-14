@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
 
-from custom_components.remora.const import LOGGER
+from .const import LOGGER
 
 
 def create_entity_callback(entity_id: str, callback: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
