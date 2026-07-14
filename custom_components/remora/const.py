@@ -13,11 +13,8 @@ PLATFORMS: list[Platform] = [
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.SELECT,
+    Platform.BUTTON,
 ]
-
-# DEFAULT_SCAN_INTERVAL = timedelta(seconds=30)
-# MIN_SCAN_INTERVAL = timedelta(seconds=5)
-# MAX_SCAN_INTERVAL = timedelta(seconds=3600)
 
 DEFAULT_SCAN_INTERVAL = 30  # secondes
 MIN_SCAN_INTERVAL = 5  # secondes (entier, pas timedelta)

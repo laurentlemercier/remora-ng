@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime
 import logging
 from typing import TYPE_CHECKING
 
 from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfElectricPotential, UnitOfInformation
+import homeassistant.util.dt as dt_util
 
 if TYPE_CHECKING:
     from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
@@ -28,12 +30,13 @@ PARALLEL_UPDATES = 0
 class RemoraSensorEntityDescription(SensorEntityDescription):
     """Décrit un capteur Remora et où lire sa valeur dans RemoraState."""
 
-    value_fn: Callable[[RemoraState], str | int | float | None]
+    value_fn: Callable[[RemoraState], str | int | float | datetime | None]
 
 
-# One diagnostic sensor per SystemInfo field. `free_ram` lives at the root
-# of RemoraState (dynamic model data) but is functionally grouped with the
-# system information sensors.
+# A diagnostic sensor per field from SystemInfo. `free_ram` lives at the root
+# of RemoraState (dynamic data on the model side) but remains attached here
+# functionally to system information, like the rest of this group.
+
 SYSTEM_SENSORS: tuple[RemoraSensorEntityDescription, ...] = (
     RemoraSensorEntityDescription(
         key="firmware",
@@ -176,6 +179,34 @@ SYSTEM_SENSORS: tuple[RemoraSensorEntityDescription, ...] = (
 )
 
 
+def _last_boot(state: RemoraState) -> datetime:
+    """Retourne l'horodatage approximatif du dernier démarrage.
+
+    Arrondi à la minute pour éviter de générer un nouvel état à chaque
+    cycle de rafraîchissement à cause de la légère latence réseau lors
+    de la lecture de l'uptime.
+    """
+
+    boot = dt_util.utcnow() - state.uptime
+
+    return boot.replace(second=0, microsecond=0)
+
+
+# Sensors based on dynamic data (not SystemInfo), but which
+# remain diagnostic information.
+
+DYNAMIC_SENSORS: tuple[RemoraSensorEntityDescription, ...] = (
+    RemoraSensorEntityDescription(
+        key="last_boot",
+        name="Dernier démarrage",
+        icon="mdi:clock-start",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=_last_boot,
+    ),
+)
+
+
 class RemoraSystemSensor(RemoraEntity, SensorEntity):
     """Capteur générique pour le système Remora."""
 
@@ -190,7 +221,7 @@ class RemoraSystemSensor(RemoraEntity, SensorEntity):
         super().__init__(coordinator, description)
 
     @property
-    def native_value(self) -> str | int | float | None:
+    def native_value(self) -> str | int | float | datetime | None:
         """Retourne la valeur du capteur dynamiquement depuis le coordinateur."""
         data = self.coordinator.data
 
@@ -214,6 +245,6 @@ async def async_setup_entry(
 
     # Nous passons uniquement le coordinateur à l'entité.
     # L'entité extrait d'elle-même les infos de l'appareil via `coordinator.device_info`
-    entities = [RemoraSystemSensor(coordinator, description) for description in SYSTEM_SENSORS]
+    entities = [RemoraSystemSensor(coordinator, description) for description in (*SYSTEM_SENSORS, *DYNAMIC_SENSORS)]
 
     async_add_entities(entities)
