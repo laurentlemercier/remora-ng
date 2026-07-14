@@ -1,6 +1,6 @@
 {
   "domain": "remora",
-  "name": "Remora custom component for Home Assistant",
+  "name": "Remora custom integration for Home Assistant",
   "codeowners": [
     "@laurentlemercier"
   ],
