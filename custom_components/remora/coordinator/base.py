@@ -1,62 +1,63 @@
-"""
-Core DataUpdateCoordinator implementation for remora.
-
-This module contains the main coordinator class that manages data fetching
-and updates for all entities in the integration.
-
-For more information on coordinators:
-https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
-"""
+"""Core DataUpdateCoordinator implementation for remora."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from custom_components.remora.const import LOGGER
-from custom_components.remora.remora import CannotConnect
+from custom_components.remora.api import CannotConnect
+from custom_components.remora.api.models import RemoraState
+from custom_components.remora.const import DOMAIN, LOGGER
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 if TYPE_CHECKING:
     from custom_components.remora.data import RemoraConfigEntry
 
 
-class RemoraDataUpdateCoordinator(DataUpdateCoordinator):
-    """
-    Class to manage fetching data from the API.
-
-    Le client API (RemoraApi) et le coordinator lui-même sont accessibles
-    via config_entry.runtime_data (voir data.py), pas via des attributes
-    passés au constructeur : le coordinator est instancié avec la
-    signature standard de DataUpdateCoordinator (hass, logger,
-    config_entry, name, update_interval) dans __init__.py.
-
-    Attributes:
-        config_entry: The config entry for this integration instance.
-    """
+class RemoraDataUpdateCoordinator(DataUpdateCoordinator[RemoraState]):
+    """Manage fetching data from the Remora API."""
 
     config_entry: RemoraConfigEntry
 
+    device_info: DeviceInfo
+
     async def _async_setup(self) -> None:
-        """
-        Set up the coordinator.
+        """Set up the coordinator."""
 
-        Appelé automatiquement par async_config_entry_first_refresh(),
-        avant la première récupération de données.
-        """
-        LOGGER.debug("Coordinator setup complete for %s", self.config_entry.entry_id)
+        client = self.config_entry.runtime_data.client
 
-    async def _async_update_data(self) -> Any:
-        """
-        Fetch data from the Remora device.
-
-        Returns:
-            dict: les données agrégées (system, relais, fp, teleinfo).
-
-        Raises:
-            UpdateFailed: si la communication avec le boîtier échoue.
-        """
         try:
-            return await self.config_entry.runtime_data.client.async_get_all_data()
+            device = await client.async_validate_connection()
+        except CannotConnect as exception:
+            raise UpdateFailed(
+                translation_domain="remora",
+                translation_key="update_failed",
+            ) from exception
+
+        self.device_info = DeviceInfo(
+            identifiers={(DOMAIN, device.unique_id)},
+            manufacturer=device.manufacturer,
+            name=device.name,
+            model=device.model,
+            hw_version=device.hardware,
+            sw_version=device.firmware,
+            serial_number=device.unique_id,
+            connections={("ip", client.host)},
+            configuration_url=client.base_url,
+        )
+
+        LOGGER.debug(
+            "Coordinator setup complete for %s",
+            self.config_entry.entry_id,
+        )
+
+    async def _async_update_data(self) -> RemoraState:
+        """Fetch data from the Remora device."""
+
+        client = self.config_entry.runtime_data.client
+
+        try:
+            return await client.async_get_state()
         except CannotConnect as exception:
             LOGGER.exception("Error communicating with Remora")
             raise UpdateFailed(

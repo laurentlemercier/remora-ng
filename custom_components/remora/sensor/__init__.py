@@ -2,24 +2,206 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from dataclasses import dataclass
+import logging
 from typing import TYPE_CHECKING
 
-from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
-from homeassistant.components.sensor import SensorEntityDescription
-
-from .air_quality import ENTITY_DESCRIPTIONS as AIR_QUALITY_DESCRIPTIONS, RemoraAirQualitySensor
-from .diagnostic import ENTITY_DESCRIPTIONS as DIAGNOSTIC_DESCRIPTIONS, RemoraDiagnosticSensor
+from custom_components.remora.entity import RemoraEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
+from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfElectricPotential, UnitOfInformation
 
 if TYPE_CHECKING:
+    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
     from custom_components.remora.data import RemoraConfigEntry
+    from custom_components.remora.models import RemoraState
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-# Combine all entity descriptions from different modules
-ENTITY_DESCRIPTIONS: tuple[SensorEntityDescription, ...] = (
-    *AIR_QUALITY_DESCRIPTIONS,
-    *DIAGNOSTIC_DESCRIPTIONS,
+_LOGGER = logging.getLogger(__name__)
+
+# Requis en dur (littéral) par hassfest, ne pas remplacer par un import.
+PARALLEL_UPDATES = 0
+
+
+@dataclass(frozen=True, kw_only=True)
+class RemoraSensorEntityDescription(SensorEntityDescription):
+    """Décrit un capteur Remora et où lire sa valeur dans RemoraState."""
+
+    value_fn: Callable[[RemoraState], str | int | float | None]
+
+
+# One diagnostic sensor per SystemInfo field. `free_ram` lives at the root
+# of RemoraState (dynamic model data) but is functionally grouped with the
+# system information sensors.
+SYSTEM_SENSORS: tuple[RemoraSensorEntityDescription, ...] = (
+    RemoraSensorEntityDescription(
+        key="firmware",
+        name="Version du firmware",
+        icon="mdi:chip",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        # Redondant avec device_info.sw_version, désactivé par défaut.
+        entity_registry_enabled_default=False,
+        value_fn=lambda state: state.device.firmware,
+    ),
+    RemoraSensorEntityDescription(
+        key="hardware",
+        name="Version du matériel",
+        icon="mdi:memory",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        # Redondant avec device_info.hw_version, désactivé par défaut.
+        entity_registry_enabled_default=False,
+        value_fn=lambda state: state.device.hardware,
+    ),
+    RemoraSensorEntityDescription(
+        key="chip_id",
+        name="Identifiant de la puce",
+        icon="mdi:identifier",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        # Redondant avec device_info.serial_number, désactivé par défaut.
+        entity_registry_enabled_default=False,
+        value_fn=lambda state: state.device.unique_id,
+    ),
+    RemoraSensorEntityDescription(
+        key="compiled",
+        name="Date de compilation",
+        icon="mdi:calendar-clock",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.compiled,
+    ),
+    RemoraSensorEntityDescription(
+        key="sdk_version",
+        name="Version du SDK",
+        icon="mdi:code-braces",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.sdk_version,
+    ),
+    RemoraSensorEntityDescription(
+        key="boot_version",
+        name="Version du bootloader",
+        icon="mdi:chip",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.boot_version,
+    ),
+    RemoraSensorEntityDescription(
+        key="modules",
+        name="Modules activés",
+        icon="mdi:puzzle",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.modules,
+    ),
+    RemoraSensorEntityDescription(
+        key="flash_real_size",
+        name="Taille de la flash",
+        icon="mdi:harddisk",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.MEGABYTES,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.flash_real_size,
+    ),
+    RemoraSensorEntityDescription(
+        key="firmware_size",
+        name="Taille du firmware",
+        icon="mdi:harddisk",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.MEGABYTES,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.firmware_size,
+    ),
+    RemoraSensorEntityDescription(
+        key="free_size",
+        name="Espace flash libre",
+        icon="mdi:harddisk",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.MEGABYTES,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.free_size,
+    ),
+    RemoraSensorEntityDescription(
+        key="analog_mv",
+        name="Entrée analogique",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=UnitOfElectricPotential.MILLIVOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.analog_mv,
+    ),
+    RemoraSensorEntityDescription(
+        key="spiffs_total",
+        name="Espace SPIFFS total",
+        icon="mdi:harddisk",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.KILOBYTES,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.spiffs_total,
+    ),
+    RemoraSensorEntityDescription(
+        key="spiffs_used",
+        name="Espace SPIFFS utilisé",
+        icon="mdi:harddisk",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.KILOBYTES,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.spiffs_used,
+    ),
+    RemoraSensorEntityDescription(
+        key="spiffs_occupation",
+        name="Occupation SPIFFS",
+        icon="mdi:harddisk",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda state: state.device.spiffs_occupation,
+    ),
+    RemoraSensorEntityDescription(
+        key="free_ram",
+        name="Mémoire RAM libre",
+        icon="mdi:memory",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.KILOBYTES,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        # `free_ram` vit sur RemoraDevice, pas directement sur RemoraState.
+        value_fn=lambda state: state.device.free_ram,
+    ),
 )
+
+
+class RemoraSystemSensor(RemoraEntity, SensorEntity):
+    """Capteur générique pour le système Remora."""
+
+    entity_description: RemoraSensorEntityDescription
+
+    def __init__(
+        self,
+        coordinator: RemoraDataUpdateCoordinator,
+        description: RemoraSensorEntityDescription,
+    ) -> None:
+        """Initialise le capteur basé sur sa description."""
+        super().__init__(coordinator, description)
+
+    @property
+    def native_value(self) -> str | int | float | None:
+        """Retourne la valeur du capteur dynamiquement depuis le coordinateur."""
+        data = self.coordinator.data
+
+        if data is None:
+            _LOGGER.debug(
+                "Aucune donnée disponible pour %s",
+                self.entity_description.key,
+            )
+            return None
+
+        return self.entity_description.value_fn(data)
 
 
 async def async_setup_entry(
@@ -28,19 +210,10 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
-    # Add air quality sensors
-    async_add_entities(
-        RemoraAirQualitySensor(
-            coordinator=entry.runtime_data.coordinator,
-            entity_description=entity_description,
-        )
-        for entity_description in AIR_QUALITY_DESCRIPTIONS
-    )
-    # Add diagnostic sensors
-    async_add_entities(
-        RemoraDiagnosticSensor(
-            coordinator=entry.runtime_data.coordinator,
-            entity_description=entity_description,
-        )
-        for entity_description in DIAGNOSTIC_DESCRIPTIONS
-    )
+    coordinator = entry.runtime_data.coordinator
+
+    # Nous passons uniquement le coordinateur à l'entité.
+    # L'entité extrait d'elle-même les infos de l'appareil via `coordinator.device_info`
+    entities = [RemoraSystemSensor(coordinator, description) for description in SYSTEM_SENSORS]
+
+    async_add_entities(entities)

@@ -8,10 +8,10 @@ from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .api import RemoraApi
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, LOGGER, PLATFORMS
 from .coordinator import RemoraDataUpdateCoordinator
 from .data import RemoraConfigEntry, RemoraData
-from .remora import RemoraApi
 
 
 async def async_setup_entry(

@@ -5,17 +5,17 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-import aiohttp
 import voluptuous as vol
 
+from custom_components.remora.api import CannotConnect, RemoraApi
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_SCAN_INTERVAL
-from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResult
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .api.models import RemoraDevice
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
-from .remora import CannotConnect, RemoraApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,26 +25,18 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
-STEP_OPTIONS_DATA_SCHEMA = vol.Schema(
-    {
-        vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): int,
-    }
-)
 
+async def async_validate_connection(hass: HomeAssistant, host: str) -> RemoraDevice:
+    """Validates the connection to Remora and returns the device information.
 
-async def async_get_device_info(hass: HomeAssistant, host: str) -> dict[str, str]:
-    """Valid la connection à Remora et retourne les infos de l'appareil.
-
-    Lève CannotConnect si le boîtier est injoignable.
+    Raise CannotConnect if the box is unreachable (already managed by
+    RemoraApi. _get_json, which converts network errors/timeout).
     """
 
     session = async_get_clientsession(hass)
     api = RemoraApi(session, host)
 
-    try:
-        return await api.async_get_device_info()
-    except (aiohttp.ClientError, TimeoutError) as err:
-        raise CannotConnect(f"Impossible de contacter Remora sur {host}") from err
+    return await api.async_validate_connection()
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -52,7 +44,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Étape initiale : saisie du host."""
 
         errors: dict[str, str] = {}
@@ -61,7 +53,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             host = user_input[CONF_HOST]
 
             try:
-                device_info = await async_get_device_info(self.hass, host)
+                device = await async_validate_connection(self.hass, host)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except Exception:
@@ -70,11 +62,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 # Unicité basée sur l'identifiant matériel réel (Chip ID),
                 # pas sur l'IP qui peut changer (DHCP).
-                await self.async_set_unique_id(device_info["unique_id"])
+                await self.async_set_unique_id(device.unique_id)
                 self._abort_if_unique_id_configured(updates=user_input)
 
                 return self.async_create_entry(
-                    title=host,
+                    title=f"Remora ({device.unique_id})",
                     data=user_input,
                 )
 
@@ -85,21 +77,18 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     @staticmethod
+    @callback
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
     ) -> OptionsFlow:
         """Permet de modifier l'intervalle de rafraîchissement après coup."""
-        return OptionsFlow(config_entry)
+        return OptionsFlow()
 
 
 class OptionsFlow(config_entries.OptionsFlow):
     """Gère les options de l'intégration Remora."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialise l'options flow."""
-        self.config_entry = config_entry
-
-    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Gère les options (intervalle de rafraîchissement)."""
 
         if user_input is not None:
