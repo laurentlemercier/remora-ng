@@ -5,10 +5,10 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.button import ButtonDeviceClass, ButtonEntity, ButtonEntityDescription
 from homeassistant.const import EntityCategory
-from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
-from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant

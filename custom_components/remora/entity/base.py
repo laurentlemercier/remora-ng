@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from custom_components.remora.const import ATTRIBUTION
+from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from remora.const import ATTRIBUTION
-from remora.coordinator import RemoraDataUpdateCoordinator
 
 if TYPE_CHECKING:
     from homeassistant.helpers.device_registry import DeviceInfo

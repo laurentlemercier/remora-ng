@@ -8,11 +8,11 @@ from datetime import datetime
 import logging
 from typing import TYPE_CHECKING
 
+from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfElectricPotential, UnitOfInformation
 import homeassistant.util.dt as dt_util
-from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
-from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant

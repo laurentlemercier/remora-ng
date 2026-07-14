@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
-from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
 
 from .connectivity import ENTITY_DESCRIPTIONS as CONNECTIVITY_DESCRIPTIONS, RemoraConnectivitySensor
 from .filter import ENTITY_DESCRIPTIONS as FILTER_DESCRIPTIONS, RemoraFilterSensor

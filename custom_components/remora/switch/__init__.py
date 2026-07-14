@@ -7,12 +7,12 @@ from dataclasses import dataclass
 import logging
 from typing import TYPE_CHECKING, Any
 
+from custom_components.remora.api import CannotConnect, RemoraCommandError
+from custom_components.remora.api.models import RelaisEtat, RelaisMode
+from custom_components.remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
+from custom_components.remora.entity import RemoraEntity
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.exceptions import HomeAssistantError
-from remora.api import CannotConnect, RemoraCommandError
-from remora.api.models import RelaisEtat, RelaisMode
-from remora.const import PARALLEL_UPDATES as PARALLEL_UPDATES
-from remora.entity import RemoraEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
