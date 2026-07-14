@@ -20,5 +20,8 @@ DEFAULT_SCAN_INTERVAL = 30  # secondes
 MIN_SCAN_INTERVAL = 5  # secondes (entier, pas timedelta)
 MAX_SCAN_INTERVAL = 3600  # secondes (entier, pas timedelta)
 
+CONF_DEBUG = "debug"
+DEFAULT_DEBUG = False
+
 PARALLEL_UPDATES = 1
 ATTRIBUTION = "Data provided by Remora"

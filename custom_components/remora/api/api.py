@@ -56,6 +56,11 @@ class RemoraApi:
         self._host = host
         self._base_url = f"http://{host}"
 
+        # SystemInfo/RemoraDevice change rarement (reboot, flash firmware).
+        # On l'interroge une seule fois puis on le met en cache, plutôt que
+        # de refaire un appel HTTP à chaque cycle de rafraîchissement.
+        self._device: RemoraDevice | None = None
+
         _LOGGER.debug("Initializing Remora API (%s)", host)
 
     @property
@@ -351,19 +356,28 @@ class RemoraApi:
     async def async_get_state(
         self,
     ) -> RemoraState:
-        """Return complete Remora state."""
+        """Return complete Remora state.
+
+        SystemInfo/RemoraDevice n'est pas réinterrogé ici : voir
+        `async_validate_connection`, qui le met en cache. Cette méthode
+        ne lit que les données réellement dynamiques.
+        """
 
         _LOGGER.debug("Refreshing Remora state")
 
+        if self._device is None:
+            # Ne devrait pas arriver en usage normal (le coordinator
+            # appelle toujours async_validate_connection au setup),
+            # mais on se protège pour rester utilisable indépendamment.
+            await self.async_validate_connection()
+
         (
-            system,
             relais,
             fp,
             delestage,
             uptime,
             teleinfo,
         ) = await asyncio.gather(
-            self._async_get_system(),
             self._async_get_relais(),
             self._async_get_fp(),
             self._async_get_delestage(),
@@ -372,7 +386,7 @@ class RemoraApi:
         )
 
         state = RemoraState(
-            device=self._parse_device(system),
+            device=self._device,
             relais=relais,
             fil_pilote=fp,
             delestage=delestage,
@@ -391,11 +405,12 @@ class RemoraApi:
     #
 
     async def async_validate_connection(self) -> RemoraDevice:
-        """Validate that the host is a Remora."""
+        """Validate that the host is a Remora, and cache its SystemInfo."""
 
         system = await self._async_get_system()
 
         device = self._parse_device(system)
+        self._device = device
 
         _LOGGER.info(
             "Connected to %s (%s)",

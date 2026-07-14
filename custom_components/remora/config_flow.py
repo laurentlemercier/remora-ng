@@ -7,15 +7,21 @@ from typing import Any
 
 import voluptuous as vol
 
+from custom_components.remora.api import CannotConnect, RemoraApi
+from custom_components.remora.api.models import RemoraDevice
+from custom_components.remora.const import (
+    CONF_DEBUG,
+    DEFAULT_DEBUG,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
+)
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-from .api import CannotConnect, RemoraApi
-from .api.models import RemoraDevice
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -81,29 +87,48 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
     ) -> OptionsFlow:
-        """Permet de modifier l'intervalle de rafraîchissement après coup."""
+        """Permet de modifier l'intervalle de rafraîchissement et le mode debug après coup."""
         return OptionsFlow()
 
 
 class OptionsFlow(config_entries.OptionsFlow):
-    """Gère les options de l'intégration Remora."""
+    """Gère les options de l'intégration Remora.
+
+    Ne pas définir `__init__` pour stocker `config_entry` : depuis
+    HA 2025.12, `self.config_entry` est une propriété en lecture
+    seule injectée automatiquement par le gestionnaire de flows.
+    """
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Gère les options (intervalle de rafraîchissement)."""
+        """Gère les options (intervalle de rafraîchissement, mode debug)."""
 
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
         current_interval = self.config_entry.options.get(
             CONF_SCAN_INTERVAL,
-            self.config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+            DEFAULT_SCAN_INTERVAL,
+        )
+        current_debug = self.config_entry.options.get(
+            CONF_DEBUG,
+            DEFAULT_DEBUG,
         )
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_SCAN_INTERVAL, default=current_interval): int,
+                    vol.Optional(
+                        CONF_SCAN_INTERVAL,
+                        default=current_interval,
+                    ): vol.All(
+                        vol.Coerce(int),
+                        vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+                    ),
+                    vol.Optional(
+                        CONF_DEBUG,
+                        default=current_debug,
+                    ): bool,
                 }
             ),
         )

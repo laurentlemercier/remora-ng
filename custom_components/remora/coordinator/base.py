@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from custom_components.remora.api.api import CannotConnect
+from custom_components.remora.api.models import RemoraState
+from custom_components.remora.const import DOMAIN, LOGGER
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from remora.api import CannotConnect
-from remora.api.models import RemoraState
-from remora.const import DOMAIN, LOGGER
 
 if TYPE_CHECKING:
     from .data import RemoraConfigEntry
