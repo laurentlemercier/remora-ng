@@ -15,12 +15,11 @@ from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfElectricPotent
 import homeassistant.util.dt as dt_util
 
 if TYPE_CHECKING:
+    from custom_components.remora.coordinator import RemoraDataUpdateCoordinator
+    from custom_components.remora.data import RemoraConfigEntry
+    from custom_components.remora.models import RemoraState
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-    from .coordinator import RemoraDataUpdateCoordinator
-    from .data import RemoraConfigEntry
-    from .models import RemoraState
 
 _LOGGER = logging.getLogger(__name__)
 
