@@ -1,0 +1,36 @@
+﻿{
+    "config":  {
+                   "step":  {
+                                "user":  {
+                                             "title":  "Configurer Remora",
+                                             "description":  "Renseigne l\u0027adresse IP (ou nom d\u0027hÃ´te) de la centrale Remora, puis choisis les entitÃ©s Ã  crÃ©er. Les thermostats (climate) sont recommandÃ©s ; les sÃ©lecteurs (select) sont optionnels.",
+                                             "data":  {
+                                                          "host":  "HÃ´te / Adresse IP",
+                                                          "scan_interval":  "Intervalle de rafraÃ®chissement (secondes)",
+                                                          "enable_climate":  "Activer les thermostats (entitÃ© climate)",
+                                                          "enable_select":  "Activer les sÃ©lecteurs de mode (entitÃ© select)"
+                                                      }
+                                         }
+                            },
+                   "error":  {
+                                 "cannot_connect":  "Impossible de se connecter Ã  la centrale Remora. VÃ©rifie l\u0027adresse.",
+                                 "unknown":  "Erreur inattendue."
+                             },
+                   "abort":  {
+                                 "already_configured":  "Cette centrale Remora est dÃ©jÃ  configurÃ©e."
+                             }
+               },
+    "options":  {
+                    "step":  {
+                                 "init":  {
+                                              "title":  "Options Remora",
+                                              "data":  {
+                                                           "scan_interval":  "Intervalle de rafraÃ®chissement (secondes)",
+                                                           "debug":  "Journaux de dÃ©bogage",
+                                                           "enable_climate":  "Activer les thermostats (entitÃ© climate)",
+                                                           "enable_select":  "Activer les sÃ©lecteurs de mode (entitÃ© select)"
+                                                       }
+                                          }
+                             }
+                }
+}
