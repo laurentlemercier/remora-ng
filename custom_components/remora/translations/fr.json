@@ -3,10 +3,12 @@
     "step": {
       "user": {
         "title": "Configurer Remora",
-        "description": "Renseigne l'adresse IP (ou nom d'hôte) de la centrale Remora et l'intervalle de rafraîchissement souhaité.",
+        "description": "Renseigne l'adresse IP (ou nom d'hôte) de la centrale Remora, puis choisis les entités à créer. Les thermostats (climate) sont recommandés ; les sélecteurs (select) sont optionnels.",
         "data": {
           "host": "Hôte / Adresse IP",
-          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+          "scan_interval": "Intervalle de rafraîchissement (secondes)",
+          "enable_climate": "Activer les thermostats (entité climate)",
+          "enable_select": "Activer les sélecteurs de mode (entité select)"
         }
       }
     },
@@ -21,9 +23,12 @@
   "options": {
     "step": {
       "init": {
-        "title": "Modifier l'intervalle de rafraîchissement",
+        "title": "Options Remora",
         "data": {
-          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+          "scan_interval": "Intervalle de rafraîchissement (secondes)",
+          "debug": "Journaux de débogage",
+          "enable_climate": "Activer les thermostats (entité climate)",
+          "enable_select": "Activer les sélecteurs de mode (entité select)"
         }
       }
     }

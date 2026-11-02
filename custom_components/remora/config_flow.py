@@ -11,7 +11,11 @@ from custom_components.remora.api import CannotConnect, RemoraApi
 from custom_components.remora.api.models import RemoraDevice
 from custom_components.remora.const import (
     CONF_DEBUG,
+    CONF_ENABLE_CLIMATE,
+    CONF_ENABLE_SELECT,
     DEFAULT_DEBUG,
+    DEFAULT_ENABLE_CLIMATE,
+    DEFAULT_ENABLE_SELECT,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     MAX_SCAN_INTERVAL,
@@ -28,15 +32,17 @@ _LOGGER = logging.getLogger(__name__)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
+        vol.Optional(CONF_ENABLE_CLIMATE, default=DEFAULT_ENABLE_CLIMATE): bool,
+        vol.Optional(CONF_ENABLE_SELECT, default=DEFAULT_ENABLE_SELECT): bool,
     }
 )
 
 
 async def async_validate_connection(hass: HomeAssistant, host: str) -> RemoraDevice:
-    """Validates the connection to Remora and returns the device information.
+    """Validate the connection to Remora and return device information.
 
-    Raise CannotConnect if the box is unreachable (already managed by
-    RemoraApi. _get_json, which converts network errors/timeout).
+    Raises CannotConnect if the unit is unreachable (handled by
+    RemoraApi._get_json, which converts network errors/timeouts).
     """
 
     session = async_get_clientsession(hass)
@@ -46,12 +52,12 @@ async def async_validate_connection(hass: HomeAssistant, host: str) -> RemoraDev
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Gère le config flow pour Remora."""
+    """Config flow handler for Remora."""
 
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Étape initiale : saisie du host."""
+        """Initial step: host entry."""
 
         errors: dict[str, str] = {}
 
@@ -63,17 +69,21 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except CannotConnect:
                 errors["base"] = "cannot_connect"
             except Exception:
-                _LOGGER.exception("Erreur inattendue lors de la validation")
+                _LOGGER.exception("Unexpected error during validation")
                 errors["base"] = "unknown"
             else:
-                # Unicité basée sur l'identifiant matériel réel (Chip ID),
-                # pas sur l'IP qui peut changer (DHCP).
+                # Use the real hardware identifier (Chip ID) for uniqueness,
+                # not the IP which can change via DHCP.
                 await self.async_set_unique_id(device.unique_id)
-                self._abort_if_unique_id_configured(updates=user_input)
+                self._abort_if_unique_id_configured(updates={CONF_HOST: host})
 
                 return self.async_create_entry(
                     title=f"Remora ({device.unique_id})",
-                    data=user_input,
+                    data={CONF_HOST: host},
+                    options={
+                        CONF_ENABLE_CLIMATE: user_input.get(CONF_ENABLE_CLIMATE, DEFAULT_ENABLE_CLIMATE),
+                        CONF_ENABLE_SELECT: user_input.get(CONF_ENABLE_SELECT, DEFAULT_ENABLE_SELECT),
+                    },
                 )
 
         return self.async_show_form(
@@ -87,20 +97,20 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
     ) -> OptionsFlow:
-        """Permet de modifier l'intervalle de rafraîchissement et le mode debug après coup."""
+        """Get the options flow handler."""
         return OptionsFlow()
 
 
 class OptionsFlow(config_entries.OptionsFlow):
-    """Gère les options de l'intégration Remora.
+    """Options flow for Remora.
 
-    Ne pas définir `__init__` pour stocker `config_entry` : depuis
-    HA 2025.12, `self.config_entry` est une propriété en lecture
-    seule injectée automatiquement par le gestionnaire de flows.
+    Do not define `__init__` to store `config_entry`: since HA 2025.12,
+    `self.config_entry` is a read-only property injected automatically by
+    the flow manager.
     """
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Gère les options (intervalle de rafraîchissement, mode debug)."""
+        """Manage options (refresh interval, debug mode)."""
 
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
@@ -112,6 +122,14 @@ class OptionsFlow(config_entries.OptionsFlow):
         current_debug = self.config_entry.options.get(
             CONF_DEBUG,
             DEFAULT_DEBUG,
+        )
+        current_enable_climate = self.config_entry.options.get(
+            CONF_ENABLE_CLIMATE,
+            DEFAULT_ENABLE_CLIMATE,
+        )
+        current_enable_select = self.config_entry.options.get(
+            CONF_ENABLE_SELECT,
+            DEFAULT_ENABLE_SELECT,
         )
 
         return self.async_show_form(
@@ -128,6 +146,14 @@ class OptionsFlow(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_DEBUG,
                         default=current_debug,
+                    ): bool,
+                    vol.Optional(
+                        CONF_ENABLE_CLIMATE,
+                        default=current_enable_climate,
+                    ): bool,
+                    vol.Optional(
+                        CONF_ENABLE_SELECT,
+                        default=current_enable_select,
                     ): bool,
                 }
             ),
