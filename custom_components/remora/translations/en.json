@@ -2,28 +2,33 @@
   "config": {
     "step": {
       "user": {
-        "title": "Configurer Remora",
-        "description": "Renseigne l'adresse IP (ou nom d'hôte) de la centrale Remora et l'intervalle de rafraîchissement souhaité.",
+        "title": "Configure Remora",
+        "description": "Enter the IP address (or hostname) of the Remora unit, then choose which entities to create. Climate entities are recommended; select entities are optional.",
         "data": {
-          "host": "Hôte / Adresse IP",
-          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+          "host": "Host / IP address",
+          "scan_interval": "Refresh interval (seconds)",
+          "enable_climate": "Enable thermostats (climate entities)",
+          "enable_select": "Enable mode selectors (select entities)"
         }
       }
     },
     "error": {
-      "cannot_connect": "Impossible de se connecter à la centrale Remora. Vérifie l'adresse.",
-      "unknown": "Erreur inattendue."
+      "cannot_connect": "Unable to connect to the Remora unit. Check the address.",
+      "unknown": "Unexpected error."
     },
     "abort": {
-      "already_configured": "Cette centrale Remora est déjà configurée."
+      "already_configured": "This Remora unit is already configured."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Modifier l'intervalle de rafraîchissement",
+        "title": "Remora Options",
         "data": {
-          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+          "scan_interval": "Refresh interval (seconds)",
+          "debug": "Debug logging",
+          "enable_climate": "Enable thermostats (climate entities)",
+          "enable_select": "Enable mode selectors (select entities)"
         }
       }
     }

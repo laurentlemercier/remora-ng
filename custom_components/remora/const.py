@@ -13,6 +13,7 @@ PLATFORMS: list[Platform] = [
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.SELECT,
+    Platform.CLIMATE,
     Platform.BUTTON,
 ]
 
@@ -22,6 +23,12 @@ MAX_SCAN_INTERVAL = 3600  # secondes (entier, pas timedelta)
 
 CONF_DEBUG = "debug"
 DEFAULT_DEBUG = False
+
+CONF_ENABLE_CLIMATE = "enable_climate"
+DEFAULT_ENABLE_CLIMATE = True
+
+CONF_ENABLE_SELECT = "enable_select"
+DEFAULT_ENABLE_SELECT = False
 
 PARALLEL_UPDATES = 1
 ATTRIBUTION = "Data provided by Remora"
