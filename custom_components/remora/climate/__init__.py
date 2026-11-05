@@ -34,7 +34,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # Home Assistant has no built-in "frost" preset. Use an explicit French
 # label so the Hors Gel mode is readable in the climate card.
-PRESET_HORS_GEL = "hors gel"
+PRESET_HORS_GEL = "hors_gel"
 
 _PRESET_TO_MODE: dict[str, FilPiloteMode] = {
     PRESET_COMFORT: FilPiloteMode.COMFORT,
