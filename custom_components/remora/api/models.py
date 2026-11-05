@@ -30,7 +30,7 @@ class FilPiloteMode(StrEnum):
 
         return {
             FilPiloteMode.COMFORT: "Confort",  # codespell:ignore Confort
-            FilPiloteMode.ARRET: "Arrêt",
+            FilPiloteMode.ARRET: "Off",
             FilPiloteMode.ECO: "Eco",
             FilPiloteMode.HORS_GEL: "Hors Gel",
             FilPiloteMode.DELESTAGE: "Délestage",
