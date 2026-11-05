@@ -32,7 +32,7 @@ class FilPiloteMode(StrEnum):
             FilPiloteMode.COMFORT: "Confort",  # codespell:ignore Confort
             FilPiloteMode.ARRET: "Off",
             FilPiloteMode.ECO: "Eco",
-            FilPiloteMode.HORS_GEL: "Hors Gel",
+            FilPiloteMode.HORS_GEL: "Hors_Gel",
             FilPiloteMode.DELESTAGE: "Délestage",
             FilPiloteMode.ECO1: "Eco -1°C",
             FilPiloteMode.ECO2: "Eco -2°C",
